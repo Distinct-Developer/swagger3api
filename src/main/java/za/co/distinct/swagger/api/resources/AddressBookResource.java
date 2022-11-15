@@ -32,19 +32,19 @@ import static za.co.distinct.swagger.api.utils.JsonUtil.setWriterJsonDataFormats
 public class AddressBookResource {
     
     private final ConcurrentMap<String, Contact> contactList = new ConcurrentHashMap<>();
-    private static final Logger logger = LogManager.getLogger(AddressBookResource.class);
     
     @GetMapping("/{id}")
     public ResponseEntity<Contact> getContact(@PathVariable("id") String id) throws JsonProcessingException {
         String contactJson = setWriterJsonDataFormats().writeValueAsString(contactList.get(id));
-        logger.info("GET Contact By ID: "+ contactJson);
+        log.info("GET Contact By ID: "+ contactJson);
         return ResponseEntity.ok(contactList.get(id));
     }
     
     @GetMapping
     public ResponseEntity<Collection<Contact>> getAllContacts() throws JsonProcessingException {
         String contactListJson = setWriterJsonDataFormats().writeValueAsString(contactList.values());
-        logger.info("GET All Contacts: "+ contactListJson);
+        log.info("GET All Contacts: "+ contactListJson);
+        ResponseEntity.internalServerError().body(log);
         return ResponseEntity.ok(contactList.values());
     }
     
@@ -52,7 +52,7 @@ public class AddressBookResource {
     public ResponseEntity<Contact> addContact(@RequestBody Contact contact) throws JsonProcessingException {
         contactList.put(contact.getId(), contact);
         String contactJson = setWriterJsonDataFormats().writeValueAsString(contact);
-        logger.info("POST Contact: "+ contactJson);
+        log.info("POST Contact: "+ contactJson);
         return ResponseEntity.ok(contact);
     }
     
@@ -60,7 +60,7 @@ public class AddressBookResource {
     public ResponseEntity<List<Contact>> addAllContacts(@RequestBody List<Contact> newContactList) throws JsonProcessingException {        
         ConcurrentHashMap<String, Contact> newContactsMap = newContactList.stream().collect(Collectors.toMap(Contact::getId, Function.identity(), (contact, nextContact) -> contact, ConcurrentHashMap::new));
         String contactJson = setWriterJsonDataFormats().writeValueAsString(newContactsMap);
-        logger.info("POST All Contacts: "+ contactJson);
+        log.info("POST All Contacts: "+ contactJson);
         this.contactList.putAll(newContactsMap);
         return ResponseEntity.ok(newContactList);
     }
