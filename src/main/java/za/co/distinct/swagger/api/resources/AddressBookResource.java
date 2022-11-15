@@ -4,6 +4,7 @@ package za.co.distinct.swagger.api.resources;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -55,7 +56,7 @@ public class AddressBookResource {
     }
     
     @PostMapping("/all")
-    public Collection<Contact> saveAllContacts(@RequestBody Collection<Contact> newContactList) throws JsonProcessingException {        
+    public List<Contact> saveAllContacts(@RequestBody List<Contact> newContactList) throws JsonProcessingException {        
         ConcurrentHashMap<String, Contact> newContactsMap = newContactList.stream().collect(Collectors.toMap(Contact::getId, Function.identity(), (contact, nextContact) -> contact, ConcurrentHashMap::new));
         String contactJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(newContactsMap);
         logger.info("POST All Contacts: "+ contactJson);
